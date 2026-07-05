@@ -39,13 +39,15 @@
 <body>
   <div class="container">
     <h1>Coming Soon</h1>
-    <p>It’s not whether you get knocked down, it’s whether you get up.</p>
     <footer>&copy; <span id="year"></span> Your Company Name</footer>
   </div>
 
-  <script>
-    // Auto-update footer year
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+<script>
+fetch('data.json')
+  .then(res => res.json())
+  .then(data => {
+    document.body.innerHTML = `<h1>Current Time</h1><p>${data.time}</p>`;
+  });
+</script>
 </body>
 </html>
