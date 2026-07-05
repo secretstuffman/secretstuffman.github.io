@@ -1,45 +1,76 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy static content to Pages with Quotes
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
   schedule:
     - cron: "*/1 * * * *"  # Every 1 minute
-    
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write   # changed to write so we can commit changes
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Update index.html with random quote
+        run: |
+          import random
+
+          quotes = [
+              "The best way to get started is to quit talking and begin doing.",
+              "Don’t let yesterday take up too much of today.",
+              "It’s not whether you get knocked down, it’s whether you get up.",
+              "If you are working on something exciting, it will keep you motivated.",
+              "Success is not in what you have, but who you are."
+          ]
+
+          # Read HTML
+          with open("index.html", "r", encoding="utf-8") as f:
+              html = f.read()
+
+          # Replace placeholder <!--QUOTE--> with a random quote
+          new_html = html.replace("<!--QUOTE-->", random.choice(quotes))
+
+          # Save updated HTML
+          with open("index.html", "w", encoding="utf-8") as f:
+              f.write(new_html)
+
+      - name: Commit updated index.html
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Update quote in index.html" || echo "No changes to commit"
+          git push
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: '.'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
