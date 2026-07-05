@@ -20,7 +20,7 @@ jobs:
             "The only way to do great work is to love what you do."
             "Success is not final, failure is not fatal: It is the courage to continue that counts."
           )
-          echo "${quotes[$RANDOM % ${#quotes[@]}]}" > quotes.txt
+          echo "${quotes[$RANDOM % ${#quotes[@]}]}" > index.html
 
       - name: Update README with quote
         run: |
