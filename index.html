@@ -1,53 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
+import requests
+from datetime import datetime
+
+# Fetch a random joke from an API
+joke_data = requests.get("https://official-joke-api.appspot.com/random_joke").json()
+joke = f"{joke_data['setup']} {joke_data['punchline']}"
+
+# Update index.html
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(f"""<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #4a90e2, #9013fe);
-      color: white;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 3em;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1.2em;
-      opacity: 0.9;
-    }
-    footer {
-      margin-top: 2em;
-      font-size: 0.9em;
-      opacity: 0.7;
-    }
-  </style>
+<title>Daily Joke</title>
+<meta charset="UTF-8">
 </head>
 <body>
-  <div class="container">
-    <h1>Coming Soon</h1>
-    <footer>&copy; <span id="year"></span> Your Company Name</footer>
-  </div>
-
-<script>
-fetch('data.json')
-  .then(res => res.json())
-  .then(data => {
-    document.body.innerHTML = `<h1>Current Time</h1><p>${data.time}</p>`;
-  });
-</script>
+<h1>😂 Daily Joke</h1>
+<p>{joke}</p>
+<small>Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}</small>
 </body>
 </html>
+""")
