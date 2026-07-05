@@ -1,0 +1,41 @@
+name: Refresh Quote Every Minute
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour (you can adjust to '*/1 * * * *' for every minute)
+  workflow_dispatch:   # Optional: allows manual trigger
+
+jobs:
+  refresh-quote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate random quote
+        run: |
+          # Example: fetch from a JSON file or API
+          quotes=(
+            "Life is what happens when you're busy making other plans."
+            "The only way to do great work is to love what you do."
+            "Success is not final, failure is not fatal: It is the courage to continue that counts."
+          )
+          echo "${quotes[$RANDOM % ${#quotes[@]}]}" > quotes.txt
+
+      - name: Update README with quote
+        run: |
+          # Read the current quote and append a new one
+          current=$(cat README.md | grep -oE 'Quote: [^$]*$' | tail -1)
+          if [ -z "$current" ]; then
+            echo "Quote: $(cat quotes.txt)" >> README.md
+          else
+            echo "Quote: $(cat quotes.txt)" >> README.md
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update quote at $(date)"
+          git push origin main
