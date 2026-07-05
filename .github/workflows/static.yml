@@ -33,27 +33,7 @@ jobs:
           python-version: "3.x"
 
       - name: Update index.html with random quote
-        run: |
-          import random
-
-          quotes = [
-              "The best way to get started is to quit talking and begin doing.",
-              "Don’t let yesterday take up too much of today.",
-              "It’s not whether you get knocked down, it’s whether you get up.",
-              "If you are working on something exciting, it will keep you motivated.",
-              "Success is not in what you have, but who you are."
-          ]
-
-          # Read HTML
-          with open("index.html", "r", encoding="utf-8") as f:
-              html = f.read()
-
-          # Replace placeholder <!--QUOTE--> with a random quote
-          new_html = html.replace("<!--QUOTE-->", random.choice(quotes))
-
-          # Save updated HTML
-          with open("index.html", "w", encoding="utf-8") as f:
-              f.write(new_html)
+        run: python update_quote.py
 
       - name: Commit updated index.html
         run: |
